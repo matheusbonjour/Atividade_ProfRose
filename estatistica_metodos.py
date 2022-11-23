@@ -202,7 +202,7 @@ leg = ax4[0].legend()
 
 
 anoma_mean  = media_diaria - ciclo_anual
-
+tags = list('abcdefgh')
 
 
 ax4[1].plot(anoma_mean,label='Anomalia (harmônico - climatologia)',linewidth=5,color='#A1456D')
@@ -226,6 +226,11 @@ for cfg in range(len(ax4)):
   ax4[cfg].set_xlim(media_diaria.index[0], media_diaria.index[-1])
   date_form = DateFormatter("%b")
   ax4[cfg].xaxis.set_major_formatter(date_form)
+  plt.text(0, 1, tags[cfg], 
+             transform=ax4[cfg].transAxes, 
+             va='bottom', 
+             fontsize=plt.rcParams['font.size']*2.5, 
+             fontweight='bold')  
 
 
 
@@ -265,3 +270,118 @@ axnoma.set_xlim(anoma.index[0], anoma.index[-1])
 
 plt.savefig('Fig5_metodos')
 plt.close()
+
+
+
+
+
+def pesos_lowpass(janela, cutoff):
+#  meiuca = ((janela - 1) // 2 ) + 1
+#  npesos = 2 * meiuca + 1
+#  pesos = np.zeros([npesos])
+#  meio = npesos // 2
+#  pesos[meio] = 2 * cutoff
+#  k = np.arange(1., (meio*2))
+
+  order = ((janela - 1) // 2 ) + 1
+  nwts = 2 * order + 1
+  w = np.zeros([nwts])
+  n = nwts // 2
+  w[n] = 2 * cutoff 
+  k = np.arange(1., n)
+  #print(f'k = {k}')
+  # Pra calcular Wk la de cima, vamos separar o produto 
+  sigma = np.sin(np.pi * k / n) * n / (np.pi * k)
+  firstfactor = np.sin(2. * np.pi * cutoff * k) / (np.pi * k)
+  #print(f'wp1 = {firstfactor}; wp2 = {sigma}')
+  # do meio pra tras
+  w[n-1:0:-1] = firstfactor * sigma
+  w[n+1:-1] = firstfactor * sigma
+  #w[n] = firstfactor[n-2] * sigma[n-2]
+  #w[1:-1] = firstfactor * sigma
+  # do meio pra frente
+  #w[1:-1] = firstfactor * sigma
+  print(f'\n w = {w[n]}')
+  return w[1:-1]
+
+
+
+
+dadoxr = xr.DataArray(anoma)
+#ax = dado1.plot()
+
+janela= 30
+cutoff=1/10
+
+peso365 = pesos_lowpass(janela, cutoff)
+
+pesolp365 = xr.DataArray(peso365, dims = ['janela'])
+
+HSxr = dadoxr
+
+#coords=[pd.date_range(dadoxr['Id'])]
+
+# Aplicando filtro lowpass
+lowpass = HSxr.rolling(Id= len(peso365), center = True).construct('janela').dot(pesolp365)
+
+mean = anoma.mean()
+
+
+lowpandas = lowpass.to_pandas()
+highpandas = anoma - lowpandas
+highpandas = highpandas + mean 
+
+#highpass = HSxr - lowpass
+#highpass = highpass + mean
+
+fig, axpass = plt.subplots(3,1,figsize=(16, 14))
+
+
+axpass[0].plot(anoma,color='#A1456D')
+axpass[1].plot(lowpandas,color='#A1456D')
+axpass[2].plot(highpandas, color='#A1456D')
+
+
+axpass[0].set_title('Serie Original',fontsize=16)
+axpass[1].set_title('LowPass')
+axpass[2].set_title('HighPass')
+
+
+
+index_plot = highpandas['Hs'].idxmax()
+axpass[2].scatter(index_plot,highpandas['Hs'].max(),color='k')
+
+
+starty, endy = axpass[0].get_ylim()
+#startx, endx = axpass[1].get_xlim()
+tags = list('abcdefgh')
+
+
+
+for cfg in range(len(axpass)):
+  axpass[cfg].set_facecolor('#FFF8D4')
+  axpass[cfg].grid(color='grey')
+  #axpass[cfg].legend(fontsize=16)
+  #ax1.set_yticks(fontsize=20)
+  axpass[cfg].xaxis.set_tick_params(labelsize=16)
+  axpass[cfg].yaxis.set_tick_params(labelsize=16)
+  axpass[cfg].set_xlim(anoma.index[0], anoma.index[-1])
+  #date_form = DateFormatter("%b")
+  #axpass[cfg].xaxis.set_major_formatter(date_form)
+  
+  axpass[cfg].yaxis.set_ticks(np.arange(starty, endy, 1))
+  axpass[cfg].yaxis.set_major_formatter(ticker.FormatStrFormatter('%0.1f'))
+  axpass[cfg].set_ylim(anoma['Hs'].min(), anoma['Hs'].max())
+  axpass[cfg].xaxis.set_major_locator(mdates.YearLocator(2))   #to get a tick every 15 minutes
+  axpass[cfg].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+  #axpass[cfg].yaxis.set_ticks(pd.date_time())
+  plt.text(0, 1, tags[cfg], 
+             transform=axpass[cfg].transAxes, 
+             va='bottom', 
+             fontsize=plt.rcParams['font.size']*2.5, 
+             fontweight='bold')  
+
+
+plt.savefig('Fig61_metodos')
+plt.close()
+
