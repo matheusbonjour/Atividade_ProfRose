@@ -385,3 +385,6 @@ for cfg in range(len(axpass)):
 plt.savefig('Fig61_metodos')
 plt.close()
 
+
+
+

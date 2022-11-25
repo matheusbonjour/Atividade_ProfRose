@@ -38,20 +38,20 @@ from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 
 
-ds_u = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/1000hpa/uwnd1000_dom1_1120.nc',decode_times=True)
-ds_v = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/1000hpa/vwnd1000_dom1_1120.nc',decode_times=True)
-ds_hgt = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/1000hpa/hgt1000_dom1_1120.nc',decode_times=True)
+ds_u = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/u1000_carol_9120.nc',decode_times=True)
+ds_v = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/v1000_carol_9120.nc',decode_times=True)
+ds_hgt = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/hgt1000_carol_9120.nc',decode_times=True)
 
 
 # Criando dataset para tirar tendência 
-dsT_hgt = ds_hgt['z'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze()
-dsT_u = ds_u['u'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze()
-dsT_v = ds_v['v'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze()
+dsT_hgt = ds_hgt['z'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze()
+dsT_u = ds_u['u'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze()
+dsT_v = ds_v['v'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze()
 
 # Criando dataset para tirar sazonalidade 
-dsS_hgt = ds_hgt['z'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze() 
-dsS_u = ds_u['u'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze()
-dsS_v = ds_v['v'].sel(time=slice("2011-01-01T23:00:00","2020-12-31T23:00:00")).squeeze()
+dsS_hgt = ds_hgt['z'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze() 
+dsS_u = ds_u['u'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze()
+dsS_v = ds_v['v'].sel(time=slice("1991-01-01T00:00:00","2020-12-31T23:00:00")).squeeze()
 
 
 # Extraindo Lat e Lon dos dados 
@@ -60,20 +60,20 @@ lon = ds_hgt['longitude'].squeeze()
 # Extraindo Tempo 
 tempo = ds_hgt['time'].squeeze()
 
-tempo_novo = pd.date_range("2011-01-01","2020-12-31", freq='D')
+tempo_novo = pd.date_range("1991-01-01","2020-12-31", freq='D')
 
-dsS_hgt['time'] = tempo_novo 
-dsS_u['time'] = tempo_novo 
-dsS_v['time'] = tempo_novo 
+#dsS_hgt['time'] = tempo_novo 
+#dsS_u['time'] = tempo_novo 
+#dsS_v['time'] = tempo_novo 
 
 
 
 #dsS2_hgt = dsS_hgt.sel(time=dia_escolhido)
 
 
-dshgt = dsS_hgt.sel(time=dia2)
-dsu = dsS_u.sel(time=dia2)
-dsv = dsS_v.sel(time=dia2)
+dshgt = dsS_hgt.sel(time=index_plot)
+dsu = dsS_u.sel(time=index_plot)
+dsv = dsS_v.sel(time=index_plot)
 
 
 
@@ -108,5 +108,10 @@ cs = ax.contourf(lon, lat, dsf_hgt[:,:], levels=levels, extend='both',cmap='RdBu
 ww = ax.quiver(lon[::sp], lat[::sp], dsf_u[::sp,::sp], dsf_v[::sp,::sp],headwidth=hd, headlength=hd, headaxislength=hd, scale=scale1)
 cb=fig.colorbar(cs, ax=ax, shrink=0.8, aspect=20) 
 cb.set_label('Altura do Geopotencial [m]',labelpad=-7) 
-plt.title(pd.to_datetime(str(dia2)).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
+plt.title(pd.to_datetime(str(index_plot)).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
+
+
+
+plt.savefig(f'{pd.to_datetime(str(index_plot)).strftime("%Y_%b_%d")}',dpi=300)
+
 plt.show()
