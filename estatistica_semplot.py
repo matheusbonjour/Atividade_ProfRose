@@ -10,7 +10,7 @@ import matplotlib.ticker as ticker
 
 from scipy import signal
 
-from statsmodels.graphics.tsaplots import plot_acf
+
 
 
 # Leitura do dado
@@ -191,8 +191,7 @@ highpandas = highpandas + mean
 #highpass = HSxr - lowpass
 #highpass = highpass + mean
 
-
-index_plot = highpandas['Hs'].idxmax()
-
+index_plot2=[]
+index_plot2.append([highpandas['Hs'].shift(-2).idxmax(),highpandas['Hs'].shift(-1).idxmax(), highpandas['Hs'].idxmax()])
 
 
