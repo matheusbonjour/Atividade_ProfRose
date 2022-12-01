@@ -194,4 +194,7 @@ highpandas = highpandas + mean
 index_plot2=[]
 index_plot2.append([highpandas['Hs'].shift(-2).idxmax(),highpandas['Hs'].shift(-1).idxmax(), highpandas['Hs'].idxmax()])
 
+index_plot3 = []
+index_plot3.append([highpandas['Hs'].idxmax() - pd.Timedelta(12,'h'), highpandas['Hs'].idxmax() - pd.Timedelta(6,'h'),highpandas['Hs'].idxmax()])
+
 

@@ -11,7 +11,7 @@ import sys, glob
 import cartopy, cartopy.crs as ccrs 
 from sklearn.linear_model import LinearRegression
 from scipy import signal
-
+import cmocean.cm as cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation
 
@@ -40,6 +40,8 @@ from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 
 
 index_plot = index_plot2[0]
+
+index_plot = index_plot3[0] 
 
 ds_u = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/u1000_carol_9120.nc',decode_times=True)
 ds_v = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/v1000_carol_9120.nc',decode_times=True)
@@ -114,7 +116,7 @@ i=0
 for i in range(len(index_plot)):
 
 
-    cs = ax.flat[i].contourf(lon, lat, dsf_hgt[i,:,:], levels=levels, extend='both',cmap='magma')
+    cs = ax.flat[i].contourf(lon, lat, dsf_hgt[i,:,:], levels=levels, extend='both',cmap=cm.balance)
 
     ax.flat[i].coastlines(resolution='50m', color='black', linewidth=0.8)
     ax.flat[i].add_feature(cartopy.feature.BORDERS, edgecolor='black', linewidth=0.5)
@@ -135,14 +137,14 @@ for i in range(len(index_plot)):
     #cs = ax.flat[i].contourf(lon, lat, dsf_hgt[i,::sp,::sp], levels=levels, extend='both',cmap='RdBu_r')
     ww = ax.flat[i].quiver(lon[::sp], lat[::sp], dsf_u[i,::sp,::sp], dsf_v[i,::sp,::sp],headwidth=hd, headlength=hd, headaxislength=hd, scale=scale1)
     #plt.title(pd.to_datetime(str(index_plot)).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
-    ax.flat[i].set_title(pd.to_datetime(str(index_plot[i])).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
+    ax.flat[i].set_title(pd.to_datetime(str(index_plot[i])).strftime("%Y_%b_%d_%H"), fontsize=16, fontweight='bold')
 
 cb=fig.colorbar(cs, ax=ax.flat[:], shrink=0.6, aspect=12) 
 cb.set_label('Altura do Geopotencial [m]', fontsize=16, fontweight='bold') 
 
 #fig.tight_layout()
 #cb.tight_layout()
-plt.savefig(f'NOVO_{pd.to_datetime(str(index_plot[0])).strftime("%Y_%b_%d")}',dpi=300)
+plt.savefig(f'NOVO_Hora_{pd.to_datetime(str(index_plot[0])).strftime("%Y_%b_%d_%H")}',dpi=300)
 
 plt.show()
 
