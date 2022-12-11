@@ -115,15 +115,19 @@ ciclo_anual.index = media_diaria.index
 
 anoma_mean  = media_diaria - ciclo_anual
 
-ciclo_anual = df_cicloano + mf1
+#ciclo_anual = df_cicloano + mf1
 
 cau = pd.concat([ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual, ciclo_anual])
-plot_var10 = df_daily['Hs'].drop(index=['1996-02-29', '2000-02-29', '2004-02-29','2008-02-29', '2012-02-29','2016-02-29'])
-plot_var10 = pd.DataFrame(plot_var10)
+plot_var10 = df_daily['Hs'][~((df_daily.index.month ==2) & (df_daily.index.day ==29))]
 
+
+
+
+#plot_var10 = pd.DataFrame(plot_var10)
+plot_var10 = pd.DataFrame(plot_var10)
 cau = cau.rename(columns = {0: 'Hs'})
 cau.index = plot_var10.index
-plot_var15 = plot_var10.rename(columns = {0: 'Hs'})
+plot_var10 = plot_var10.rename(columns = {0: 'Hs'})
 anoma = plot_var10 - cau
 
 
@@ -179,14 +183,16 @@ HSxr = dadoxr
 #coords=[pd.date_range(dadoxr['Id'])]
 
 # Aplicando filtro lowpass
-lowpass = HSxr.rolling(Id= len(peso365), center = True).construct('janela').dot(pesolp365)
+lowpass = HSxr.rolling(Id=len(peso365), center = True).construct('janela').dot(pesolp365)
 
 mean = anoma.mean()
 
 
 lowpandas = lowpass.to_pandas()
 highpandas = anoma - lowpandas
-highpandas = highpandas + mean 
+highpandas['Hs'] = highpandas + mean 
+
+
 
 #highpass = HSxr - lowpass
 #highpass = highpass + mean
@@ -197,4 +203,19 @@ index_plot2.append([highpandas['Hs'].shift(-2).idxmax(),highpandas['Hs'].shift(-
 index_plot3 = []
 index_plot3.append([highpandas['Hs'].idxmax() - pd.Timedelta(12,'h'), highpandas['Hs'].idxmax() - pd.Timedelta(6,'h'),highpandas['Hs'].idxmax()])
 
+bb95 = np.percentile(highpandas['Hs'].dropna(),99)
 
+mhigh = highpandas['Hs'].mean()
+stdhigh = highpandas['Hs'].std()  
+
+std2high = 2*stdhigh
+std3high = 3*stdhigh 
+perc95 = std2high + mhigh
+perc99 = std3high +mhigh
+perc05 = mhigh - std2high
+perc01 = mhigh - std3high  
+
+btempo05 = highpandas['Hs'][highpandas['Hs'] <= perc05]
+btempo01 = highpandas['Hs'][highpandas['Hs'] <= perc01]
+mtempo95 = highpandas['Hs'][highpandas['Hs'] >= perc95]
+mtempo99 = highpandas['Hs'][highpandas['Hs'] >= perc99]
