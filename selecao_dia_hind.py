@@ -38,10 +38,7 @@ from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 #from estatistica_semplot import index_plot
 
-
-index_plot = index_plot2[0]
-
-index_plot = index_plot3[0] 
+index_plot = mtempo99.index
 
 ds_u = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/u1000_carol_9120.nc',decode_times=True)
 ds_v = xr.open_dataset('/p1-nemo/mbonjour/novos_wt_dados/30anos_1000hpa/v1000_carol_9120.nc',decode_times=True)
@@ -75,17 +72,22 @@ tempo_novo = pd.date_range("1991-01-01","2020-12-31", freq='D')
 
 #dsS2_hgt = dsS_hgt.sel(time=dia_escolhido)
 
-
+# SEL COMPOSITES
 dshgt = dsS_hgt.sel(time=index_plot)
 dsu = dsS_u.sel(time=index_plot)
 dsv = dsS_v.sel(time=index_plot)
 
+hgtmean = dshgt.mean("time")
+vmean = dsv.mean("time")
+umean = dsu.mean("time")
 
 
-dsf_hgt = dshgt.values
-dsf_u = dsu.values
-dsf_v = dsv.values
+dsf_hgt = hgtmean.values
+dsf_u = umean.values
+dsf_v = vmean.values
 
+
+dsf_hgt = hgtmean.values
 
 sp=8
 hd=4

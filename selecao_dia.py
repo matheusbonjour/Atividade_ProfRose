@@ -71,6 +71,9 @@ tempo_novo = pd.date_range("1991-01-01","2020-12-31", freq='D')
 #dsS2_hgt = dsS_hgt.sel(time=dia_escolhido)
 
 
+index_plot = btempo01.index
+
+
 dshgt = dsS_hgt.sel(time=index_plot)
 dsu = dsS_u.sel(time=index_plot)
 dsv = dsS_v.sel(time=index_plot)
@@ -80,6 +83,17 @@ dsv = dsS_v.sel(time=index_plot)
 dsf_hgt = dshgt.values
 dsf_u = dsu.values
 dsf_v = dsv.values
+
+
+hgtmean = dshgt.mean("time")
+vmean = dsv.mean("time")
+umean = dsu.mean("time")
+
+
+dsf_hgt = hgtmean.values
+dsf_u = umean.values
+dsf_v = vmean.values
+
 
 
 sp=10
@@ -108,10 +122,10 @@ cs = ax.contourf(lon, lat, dsf_hgt[:,:], levels=levels, extend='both',cmap='RdBu
 ww = ax.quiver(lon[::sp], lat[::sp], dsf_u[::sp,::sp], dsf_v[::sp,::sp],headwidth=hd, headlength=hd, headaxislength=hd, scale=scale1)
 cb=fig.colorbar(cs, ax=ax, shrink=0.8, aspect=20) 
 cb.set_label('Altura do Geopotencial [m]',labelpad=-7) 
-plt.title(pd.to_datetime(str(index_plot)).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
 
 
 
-plt.savefig(f'{pd.to_datetime(str(index_plot)).strftime("%Y_%b_%d")}',dpi=300)
+
+plt.savefig('composites01',dpi=300)
 
 plt.show()

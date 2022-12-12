@@ -203,19 +203,24 @@ index_plot2.append([highpandas['Hs'].shift(-2).idxmax(),highpandas['Hs'].shift(-
 index_plot3 = []
 index_plot3.append([highpandas['Hs'].idxmax() - pd.Timedelta(12,'h'), highpandas['Hs'].idxmax() - pd.Timedelta(6,'h'),highpandas['Hs'].idxmax()])
 
-bb95 = np.percentile(highpandas['Hs'].dropna(),99)
+Fperc99 = np.percentile(highpandas['Hs'].dropna(),99)
+Fperc95 = np.percentile(highpandas['Hs'].dropna(),95)
+Fperc01 = np.percentile(highpandas['Hs'].dropna(),1)
+Fperc05 = np.percentile(highpandas['Hs'].dropna(),5)
 
-mhigh = highpandas['Hs'].mean()
-stdhigh = highpandas['Hs'].std()  
 
-std2high = 2*stdhigh
-std3high = 3*stdhigh 
-perc95 = std2high + mhigh
-perc99 = std3high +mhigh
-perc05 = mhigh - std2high
-perc01 = mhigh - std3high  
 
-btempo05 = highpandas['Hs'][highpandas['Hs'] <= perc05]
-btempo01 = highpandas['Hs'][highpandas['Hs'] <= perc01]
-mtempo95 = highpandas['Hs'][highpandas['Hs'] >= perc95]
-mtempo99 = highpandas['Hs'][highpandas['Hs'] >= perc99]
+#mhigh = highpandas['Hs'].mean()
+#stdhigh = highpandas['Hs'].std()  
+#
+#std2high = 2*stdhigh
+#std3high = 3*stdhigh 
+#perc95 = std2high + mhigh
+#perc99 = std3high + mhigh
+#perc05 = mhigh - std2high
+#perc01 = mhigh - std3high  
+
+btempo05 = highpandas['Hs'][highpandas['Hs'] <= Fperc05]
+btempo01 = highpandas['Hs'][highpandas['Hs'] <= Fperc01]
+mtempo95 = highpandas['Hs'][highpandas['Hs'] >= Fperc95]
+mtempo99 = highpandas['Hs'][highpandas['Hs'] >= Fperc99]
