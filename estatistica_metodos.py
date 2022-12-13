@@ -357,6 +357,33 @@ starty, endy = axpass[0].get_ylim()
 tags = list('abcdefgh')
 
 
+Fperc99 = np.percentile(highpandas['Hs'].dropna(),99)
+Fperc95 = np.percentile(highpandas['Hs'].dropna(),95)
+Fperc01 = np.percentile(highpandas['Hs'].dropna(),1)
+Fperc05 = np.percentile(highpandas['Hs'].dropna(),5)
+
+
+
+#mhigh = highpandas['Hs'].mean()
+#stdhigh = highpandas['Hs'].std()  
+#
+#std2high = 2*stdhigh
+#std3high = 3*stdhigh 
+#perc95 = std2high + mhigh
+#perc99 = std3high + mhigh
+#perc05 = mhigh - std2high
+#perc01 = mhigh - std3high  
+
+btempo05 = highpandas['Hs'][highpandas['Hs'] <= Fperc05]
+btempo01 = highpandas['Hs'][highpandas['Hs'] <= Fperc01]
+mtempo95 = highpandas['Hs'][highpandas['Hs'] >= Fperc95]
+mtempo99 = highpandas['Hs'][highpandas['Hs'] >= Fperc99]
+
+
+axpass[2].axhline(y=Fperc99, linewidth=4, color='green',label='Percentil 99%')
+axpass[2].axhline(y=Fperc01, linewidth=4, color='red', label='Percentil 1%')
+axpass[2].legend() 
+
 
 for cfg in range(len(axpass)):
   axpass[cfg].set_facecolor('#FFF8D4')
@@ -382,7 +409,7 @@ for cfg in range(len(axpass)):
              fontweight='bold')  
 
 
-plt.savefig('Fig61_metodos')
+plt.savefig('Fig62_metodos')
 plt.close()
 
 
