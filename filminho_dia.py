@@ -44,6 +44,8 @@ ww = ax.quiver(lon[::sp], lat[::sp], dsf_u[i,::sp,::sp], dsf_v[i,::sp,::sp],head
 cb=fig.colorbar(cs, ax=ax, shrink=0.8, aspect=20) 
 cb.set_label('Altura do Geopotencial [m]',labelpad=-7) 
 plt.title(pd.to_datetime(str(tempo[i].values)).strftime("%Y_%b_%d"), fontsize=16, fontweight='bold')
+
+
 def animate(i):
 
     

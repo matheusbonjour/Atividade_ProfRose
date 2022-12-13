@@ -37,7 +37,7 @@ from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 
 
-index_plot = mtempo95.index
+index_plot = btempo01.index
 
 
 dshgt = dsS_hgt.sel(time=index_plot)
@@ -127,7 +127,7 @@ for i, seas in zip(range(len(ds_w_hgt.season.values)),ds_w_hgt.season.values):
             fontsize=plt.rcParams['font.size']*2, 
             fontweight='bold',
             color='r')
-    plt.subplots_adjust(hspace=0.0)
+    plt.subplots_adjust(hspace=0.2,wspace=0.00001)
 
 
 cb=fig.colorbar(cs, ax=ax.flat[:], shrink=0.6, aspect=12) 
@@ -135,7 +135,7 @@ cb.set_label('Altura do Geopotencial [m]', fontsize=16, fontweight='bold')
 
 #fig.tight_layout()
 #cb.tight_layout()
-plt.savefig('seasons_mtempo95_weightened3',dpi=300)
+plt.savefig('seasons_btempo01_oficial',dpi=300)
 
 plt.show()
 
